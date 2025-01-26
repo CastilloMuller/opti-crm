@@ -21,6 +21,9 @@
     "lru-cache": "^10.1.0",
     "luxon": "^3.4.4",
     "pinia": "^2.1.7",
+    "primevue": "^3.46.0",
+    "primeicons": "^6.0.1",
+    "primeflex": "^3.3.1",
     "serve": "^14.2.1",
     "vue": "^3.3.4"
   },
