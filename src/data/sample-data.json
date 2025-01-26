@@ -1,0 +1,320 @@
+{
+  "leads": [
+    {
+      "id": "L001",
+      "name": "Sarah Johnson",
+      "company": "TechStart Solutions",
+      "email": "sarah.johnson@techstart.com",
+      "phone": "+1 (415) 555-0123",
+      "status": "HOT",
+      "source": "Website",
+      "industry": "Software",
+      "value": 75000,
+      "createdAt": "2025-01-10T09:30:00Z",
+      "lastContact": "2025-01-24T14:15:00Z",
+      "score": 85,
+      "tasks": [
+        {
+          "id": "T001",
+          "title": "Follow up on enterprise proposal",
+          "description": "Review and discuss the custom enterprise solution proposal",
+          "dueDate": "2025-02-01T15:00:00Z",
+          "status": "IN_PROGRESS",
+          "priority": "HIGH",
+          "type": "MEETING"
+        },
+        {
+          "id": "T002",
+          "title": "Send pricing breakdown",
+          "description": "Prepare detailed pricing for each module",
+          "dueDate": "2025-01-28T12:00:00Z",
+          "status": "PENDING",
+          "priority": "MEDIUM",
+          "type": "EMAIL"
+        }
+      ],
+      "notes": [
+        {
+          "id": "N001",
+          "content": "Very interested in our AI capabilities. Mentioned Q2 budget approval.",
+          "createdAt": "2025-01-20T10:30:00Z",
+          "type": "MEETING_NOTES"
+        },
+        {
+          "id": "N002",
+          "content": "Current provider contract ends in March. Looking for seamless transition.",
+          "createdAt": "2025-01-22T16:45:00Z",
+          "type": "CALL_NOTES"
+        }
+      ],
+      "communications": [
+        {
+          "id": "C001",
+          "type": "CALL",
+          "content": "Initial discovery call - discussed current pain points",
+          "timestamp": "2025-01-15T11:00:00Z",
+          "duration": 45
+        },
+        {
+          "id": "C002",
+          "type": "EMAIL",
+          "content": "Sent follow-up with product specifications",
+          "timestamp": "2025-01-17T09:20:00Z"
+        }
+      ]
+    },
+    {
+      "id": "L002",
+      "name": "Michael Chen",
+      "company": "HealthCare Plus",
+      "email": "m.chen@healthcareplus.org",
+      "phone": "+1 (628) 555-0456",
+      "status": "WARM",
+      "source": "Referral",
+      "industry": "Healthcare",
+      "value": 120000,
+      "createdAt": "2025-01-05T13:45:00Z",
+      "lastContact": "2025-01-23T16:30:00Z",
+      "score": 72,
+      "tasks": [
+        {
+          "id": "T003",
+          "title": "Technical integration meeting",
+          "description": "Discuss API integration requirements with IT team",
+          "dueDate": "2025-02-05T14:00:00Z",
+          "status": "SCHEDULED",
+          "priority": "HIGH",
+          "type": "MEETING"
+        }
+      ],
+      "notes": [
+        {
+          "id": "N003",
+          "content": "Requires HIPAA compliance documentation. Send certification.",
+          "createdAt": "2025-01-21T15:20:00Z",
+          "type": "REQUIREMENT"
+        }
+      ],
+      "communications": [
+        {
+          "id": "C003",
+          "type": "VIDEO_CALL",
+          "content": "Demo session with department heads",
+          "timestamp": "2025-01-19T15:00:00Z",
+          "duration": 60
+        }
+      ]
+    },
+    {
+      "id": "L003",
+      "name": "Emma Martinez",
+      "company": "Green Energy Solutions",
+      "email": "emma.m@greenenergy.co",
+      "phone": "+1 (510) 555-0789",
+      "status": "HOT",
+      "source": "Conference",
+      "industry": "Energy",
+      "value": 250000,
+      "createdAt": "2024-12-15T10:00:00Z",
+      "lastContact": "2025-01-24T11:45:00Z",
+      "score": 90,
+      "tasks": [
+        {
+          "id": "T004",
+          "title": "Contract review meeting",
+          "description": "Final review of contract terms with legal team",
+          "dueDate": "2025-01-30T13:00:00Z",
+          "status": "SCHEDULED",
+          "priority": "HIGH",
+          "type": "MEETING"
+        },
+        {
+          "id": "T005",
+          "title": "Implementation timeline",
+          "description": "Create detailed implementation schedule",
+          "dueDate": "2025-02-02T16:00:00Z",
+          "status": "PENDING",
+          "priority": "MEDIUM",
+          "type": "DOCUMENT"
+        },
+        {
+          "id": "T006",
+          "title": "Budget approval follow-up",
+          "description": "Check status of budget approval process",
+          "dueDate": "2025-01-29T11:00:00Z",
+          "status": "PENDING",
+          "priority": "HIGH",
+          "type": "CALL"
+        }
+      ],
+      "notes": [
+        {
+          "id": "N004",
+          "content": "Board approval expected by month-end. Fast-track implementation needed.",
+          "createdAt": "2025-01-18T14:30:00Z",
+          "type": "MEETING_NOTES"
+        },
+        {
+          "id": "N005",
+          "content": "Competitor's solution lacks renewable energy tracking feature.",
+          "createdAt": "2025-01-20T09:15:00Z",
+          "type": "COMPETITIVE_INFO"
+        },
+        {
+          "id": "N006",
+          "content": "CEO very impressed with ROI calculator results.",
+          "createdAt": "2025-01-22T16:00:00Z",
+          "type": "FEEDBACK"
+        }
+      ],
+      "communications": [
+        {
+          "id": "C004",
+          "type": "MEETING",
+          "content": "On-site presentation to board members",
+          "timestamp": "2025-01-16T14:00:00Z",
+          "duration": 90
+        },
+        {
+          "id": "C005",
+          "type": "EMAIL",
+          "content": "Sent updated proposal with renewable tracking module",
+          "timestamp": "2025-01-18T10:30:00Z"
+        },
+        {
+          "id": "C006",
+          "type": "CALL",
+          "content": "Discussion about implementation timeline",
+          "timestamp": "2025-01-23T15:45:00Z",
+          "duration": 30
+        }
+      ]
+    },
+    {
+      "id": "L004",
+      "name": "David Wilson",
+      "company": "Retail Pro",
+      "email": "d.wilson@retailpro.com",
+      "phone": "+1 (415) 555-0321",
+      "status": "COLD",
+      "source": "LinkedIn",
+      "industry": "Retail",
+      "value": 45000,
+      "createdAt": "2025-01-08T14:20:00Z",
+      "lastContact": "2025-01-15T10:30:00Z",
+      "score": 35,
+      "tasks": [
+        {
+          "id": "T007",
+          "title": "Send follow-up email",
+          "description": "Check if requirements have changed",
+          "dueDate": "2025-01-31T09:00:00Z",
+          "status": "PENDING",
+          "priority": "LOW",
+          "type": "EMAIL"
+        }
+      ],
+      "notes": [
+        {
+          "id": "N007",
+          "content": "Currently using competitor solution. Contract ends in 6 months.",
+          "createdAt": "2025-01-15T10:35:00Z",
+          "type": "GENERAL"
+        }
+      ],
+      "communications": [
+        {
+          "id": "C007",
+          "type": "EMAIL",
+          "content": "Initial outreach",
+          "timestamp": "2025-01-15T10:30:00Z"
+        }
+      ]
+    },
+    {
+      "id": "L005",
+      "name": "Lisa Brown",
+      "company": "FinTech Innovations",
+      "email": "lisa.brown@fintech-innov.com",
+      "phone": "+1 (628) 555-0987",
+      "status": "HOT",
+      "source": "Partner Referral",
+      "industry": "Financial Services",
+      "value": 180000,
+      "createdAt": "2024-12-20T11:15:00Z",
+      "lastContact": "2025-01-24T13:20:00Z",
+      "score": 88,
+      "tasks": [
+        {
+          "id": "T008",
+          "title": "Security review meeting",
+          "description": "Present security architecture and compliance",
+          "dueDate": "2025-01-29T14:00:00Z",
+          "status": "SCHEDULED",
+          "priority": "HIGH",
+          "type": "MEETING"
+        },
+        {
+          "id": "T009",
+          "title": "ROI calculation",
+          "description": "Prepare detailed ROI analysis",
+          "dueDate": "2025-01-31T16:00:00Z",
+          "status": "IN_PROGRESS",
+          "priority": "HIGH",
+          "type": "DOCUMENT"
+        },
+        {
+          "id": "T010",
+          "title": "Integration proposal",
+          "description": "Draft technical integration approach",
+          "dueDate": "2025-02-03T11:00:00Z",
+          "status": "PENDING",
+          "priority": "MEDIUM",
+          "type": "DOCUMENT"
+        }
+      ],
+      "notes": [
+        {
+          "id": "N008",
+          "content": "Extremely interested in fraud detection module.",
+          "createdAt": "2025-01-10T15:45:00Z",
+          "type": "MEETING_NOTES"
+        },
+        {
+          "id": "N009",
+          "content": "Need to emphasize real-time transaction monitoring capability.",
+          "createdAt": "2025-01-17T11:30:00Z",
+          "type": "STRATEGY"
+        },
+        {
+          "id": "N010",
+          "content": "Integration with existing core banking system is critical.",
+          "createdAt": "2025-01-22T14:20:00Z",
+          "type": "REQUIREMENT"
+        }
+      ],
+      "communications": [
+        {
+          "id": "C008",
+          "type": "VIDEO_CALL",
+          "content": "Product demo to technical team",
+          "timestamp": "2025-01-12T14:00:00Z",
+          "duration": 75
+        },
+        {
+          "id": "C009",
+          "type": "MEETING",
+          "content": "Security requirements discussion",
+          "timestamp": "2025-01-17T11:00:00Z",
+          "duration": 60
+        },
+        {
+          "id": "C010",
+          "type": "EMAIL",
+          "content": "Sent technical specifications document",
+          "timestamp": "2025-01-20T09:45:00Z"
+        }
+      ]
+    }
+  ]
+}
