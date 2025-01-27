@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import { useStore } from '@/stores/store'
+import { useStore } from '../stores/store'
 
 const WS_URL = import.meta.env.VITE_WS_URL || 'wss://opti-crm-backend.onrender.com/ws'
 
