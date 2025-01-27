@@ -1,6 +1,7 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useNotifications } from './useNotifications'
-import type { Notification } from '@/types/notification'
+
+const WS_URL = import.meta.env.VITE_WS_URL || 'wss://opti-crm-backend.onrender.com/ws'
 
 export function useWebSocket() {
   const socket = ref<WebSocket | null>(null)
@@ -12,13 +13,8 @@ export function useWebSocket() {
 
   const connect = () => {
     try {
-      const wsUrl = import.meta.env.VITE_WS_URL || 
-        (window.location.protocol === 'https:' ? 
-          'wss://opti-crm-api.onrender.com/ws' : 
-          'ws://localhost:3000/ws')
-
-      console.log('Connecting to WebSocket:', wsUrl)
-      socket.value = new WebSocket(wsUrl)
+      console.log('Connecting to WebSocket:', WS_URL)
+      socket.value = new WebSocket(WS_URL)
 
       socket.value.onopen = () => {
         console.log('WebSocket connected')
@@ -76,92 +72,8 @@ export function useWebSocket() {
       case 'notification':
         addNotification(data.payload)
         break
-      case 'lead_update':
-        handleLeadUpdate(data.payload)
-        break
-      case 'task_update':
-        handleTaskUpdate(data.payload)
-        break
-      case 'communication_update':
-        handleCommunicationUpdate(data.payload)
-        break
-      case 'system_message':
-        handleSystemMessage(data.payload)
-        break
       default:
         console.warn('Unknown message type:', data.type)
-    }
-  }
-
-  const handleNotification = (payload: Notification) => {
-    addNotification(payload)
-  }
-
-  const handleLeadUpdate = (payload: any) => {
-    addNotification({
-      type: 'lead_updated',
-      title: 'Lead Updated',
-      message: `Lead "${payload.name}" has been updated`,
-      priority: 'medium',
-      actionRequired: false,
-      metadata: {
-        leadId: payload.id
-      }
-    })
-  }
-
-  const handleTaskUpdate = (payload: any) => {
-    addNotification({
-      type: 'task_updated',
-      title: 'Task Updated',
-      message: `Task "${payload.title}" has been updated`,
-      priority: 'medium',
-      actionRequired: false,
-      metadata: {
-        taskId: payload.id,
-        leadId: payload.leadId
-      }
-    })
-  }
-
-  const handleCommunicationUpdate = (payload: any) => {
-    addNotification({
-      type: 'communication_received',
-      title: 'New Communication',
-      message: `New ${payload.method} communication for lead "${payload.leadName}"`,
-      priority: 'medium',
-      actionRequired: true,
-      metadata: {
-        communicationId: payload.id,
-        leadId: payload.leadId
-      }
-    })
-  }
-
-  const handleSystemMessage = (payload: any) => {
-    addNotification({
-      type: 'system',
-      title: payload.title || 'System Message',
-      message: payload.message,
-      priority: payload.priority || 'medium',
-      actionRequired: payload.actionRequired || false,
-      metadata: payload.metadata
-    })
-  }
-
-  const sendMessage = (type: string, payload: any) => {
-    if (socket.value && isConnected.value) {
-      socket.value.send(JSON.stringify({ type, payload }))
-    } else {
-      console.error('WebSocket is not connected')
-    }
-  }
-
-  const disconnect = () => {
-    if (socket.value) {
-      socket.value.close()
-      socket.value = null
-      isConnected.value = false
     }
   }
 
@@ -177,9 +89,6 @@ export function useWebSocket() {
 
   return {
     isConnected,
-    socket,
-    sendMessage,
-    connect,
-    disconnect
+    socket
   }
 }

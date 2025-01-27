@@ -1,13 +1,14 @@
 import { ref } from 'vue'
 import { useStore } from '@/stores/store'
 
-class WebSocketService {
+const WS_URL = import.meta.env.VITE_WS_URL || 'wss://opti-crm-backend.onrender.com/ws'
+
+export class WebSocketService {
   private socket: WebSocket | null = null
   private reconnectAttempts = 0
   private readonly maxReconnectAttempts = 5
   private readonly reconnectDelay = 1000
   private store: ReturnType<typeof useStore>
-  
   public isConnected = ref(false)
   public lastMessage = ref<Date | null>(null)
 
@@ -18,14 +19,9 @@ class WebSocketService {
 
   private initializeWebSocket() {
     try {
-      const wsUrl = import.meta.env.VITE_WS_URL || 
-        (window.location.protocol === 'https:' ? 
-          'wss://opti-crm-api.onrender.com/ws' : 
-          'ws://localhost:3000/ws')
+      console.log('Connecting to WebSocket:', WS_URL)
+      this.socket = new WebSocket(WS_URL)
 
-      console.log('Connecting to WebSocket:', wsUrl)
-      this.socket = new WebSocket(wsUrl)
-      
       this.socket.onopen = () => {
         console.log('WebSocket connected')
         this.isConnected.value = true
@@ -126,6 +122,7 @@ class WebSocketService {
   }
 }
 
+// Create a singleton instance
 const websocketService = new WebSocketService()
 
 export function useWebSocket() {
