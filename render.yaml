@@ -1,11 +1,15 @@
 services:
-  - type: web
+  - type: static
     name: opti-crm
-    env: node
     buildCommand: npm install && npm run build
-    startCommand: npm start
-    envVars:
-      - key: NODE_VERSION
-        value: "18"
-      - key: NODE_ENV
-        value: production
+    publishDir: dist
+    staticPublishPath: /
+    pullRequestPreviewsEnabled: false
+    headers:
+      - path: /*
+        name: Cache-Control
+        value: no-cache
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
