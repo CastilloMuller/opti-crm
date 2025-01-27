@@ -73,7 +73,7 @@ const notifications = ref([
 const unreadNotifications = computed(() => notifications.value.length)
 
 const pageTitle = computed(() => {
-  const routeName = route.name as string
+  const routeName = route.name as string || 'Dashboard'
   return routeName.charAt(0).toUpperCase() + routeName.slice(1)
 })
 

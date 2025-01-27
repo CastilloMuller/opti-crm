@@ -20,9 +20,10 @@ class WebSocketService {
     try {
       const wsUrl = import.meta.env.VITE_WS_URL || 
         (window.location.protocol === 'https:' ? 
-          'wss://localhost:3000/ws' : 
+          'wss://opti-crm-api.onrender.com/ws' : 
           'ws://localhost:3000/ws')
 
+      console.log('Connecting to WebSocket:', wsUrl)
       this.socket = new WebSocket(wsUrl)
       
       this.socket.onopen = () => {

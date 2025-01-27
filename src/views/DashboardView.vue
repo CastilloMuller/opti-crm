@@ -142,11 +142,27 @@ import Button from 'primevue/button'
 const router = useRouter()
 const store = useLeadStore()
 const {
-  leadMetrics,
-  leadFunnel,
-  activityMetrics,
-  performanceMetrics,
-  conversionMetrics
+  leadMetrics = ref({
+    total: 0,
+    new: 0,
+    statusCounts: {}
+  }),
+  leadFunnel = ref({
+    stages: []
+  }),
+  activityMetrics = ref({
+    total: 0,
+    completed: 0
+  }),
+  performanceMetrics = ref({
+    revenue: 0,
+    revenueTrend: 0,
+    monthly: []
+  }),
+  conversionMetrics = ref({
+    conversionRate: 0,
+    conversionTrend: 0
+  })
 } = useAnalytics()
 
 const { isConnected, lastMessage } = useWebSocket()
