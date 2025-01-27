@@ -13,7 +13,12 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     port: process.env.PORT || 3000,
-    strictPort: true
+    strictPort: true,
+    allowedHosts: [
+      'opti-crm.onrender.com',
+      'opti-crm-api.onrender.com',
+      '.onrender.com'  // Allow all subdomains on render.com
+    ]
   },
   define: {
     'process.env': {}
