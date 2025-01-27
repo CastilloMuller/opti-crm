@@ -165,6 +165,11 @@ const {
   })
 } = useAnalytics()
 
+const todaysTasks = ref({
+  total: 0,
+  completed: 0
+})
+
 const { isConnected, lastMessage } = useWebSocket()
 
 // Real-time status
@@ -218,19 +223,6 @@ const chartOptions = {
 }
 
 // Tasks Overview
-const todaysTasks = computed(() => {
-  const today = DateTime.now().startOf('day')
-  const tasks = store.tasks.filter(task => {
-    const taskDate = DateTime.fromISO(task.scheduledDate)
-    return taskDate >= today && taskDate < today.plus({ days: 1 })
-  })
-  
-  return {
-    total: tasks.length,
-    completed: tasks.filter(t => t.completed).length
-  }
-})
-
 const upcomingTasks = computed(() => {
   const now = DateTime.now()
   return store.tasks

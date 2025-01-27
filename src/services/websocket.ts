@@ -1,18 +1,18 @@
 import { ref } from 'vue'
-import { useLeadStore } from '@/stores/leadStore'
-import type { Lead, Task, Communication, Note } from '@/types/lead'
+import { useStore } from '@/stores/store'
 
 class WebSocketService {
   private socket: WebSocket | null = null
   private reconnectAttempts = 0
-  private maxReconnectAttempts = 5
-  private reconnectDelay = 1000
-  private heartbeatInterval: number | null = null
+  private readonly maxReconnectAttempts = 5
+  private readonly reconnectDelay = 1000
+  private store: ReturnType<typeof useStore>
   
   public isConnected = ref(false)
   public lastMessage = ref<Date | null>(null)
 
   constructor() {
+    this.store = useStore()
     this.initializeWebSocket()
   }
 
@@ -30,7 +30,6 @@ class WebSocketService {
         console.log('WebSocket connected')
         this.isConnected.value = true
         this.reconnectAttempts = 0
-        this.reconnectDelay = 1000
         this.startHeartbeat()
       }
 
@@ -46,41 +45,17 @@ class WebSocketService {
       }
 
       this.socket.onmessage = (event) => {
-        this.handleMessage(event.data)
-        this.lastMessage.value = new Date()
+        try {
+          const data = JSON.parse(event.data)
+          this.handleMessage(data)
+          this.lastMessage.value = new Date()
+        } catch (error) {
+          console.error('Error parsing WebSocket message:', error)
+        }
       }
     } catch (error) {
       console.error('Error initializing WebSocket:', error)
       this.handleReconnect()
-    }
-  }
-
-  private handleMessage(data: string) {
-    try {
-      const store = useLeadStore()
-      const message = JSON.parse(data)
-      
-      switch (message.type) {
-        case 'lead':
-          store.updateLead(message.data as Lead)
-          break
-        case 'task':
-          store.updateTask(message.data as Task)
-          break
-        case 'communication':
-          store.updateCommunication(message.data as Communication)
-          break
-        case 'note':
-          store.updateNote(message.data as Note)
-          break
-        case 'pong':
-          // Handle heartbeat response
-          break
-        default:
-          console.warn('Unknown message type:', message.type)
-      }
-    } catch (error) {
-      console.error('Error handling message:', error)
     }
   }
 
@@ -91,10 +66,31 @@ class WebSocketService {
       
       setTimeout(() => {
         this.initializeWebSocket()
-        this.reconnectDelay *= 2 // Exponential backoff
       }, this.reconnectDelay)
     } else {
       console.error('Max reconnection attempts reached')
+      this.store.addNotification({
+        severity: 'error',
+        summary: 'Connection Error',
+        detail: 'Unable to connect to the server. Please try again later.',
+        life: 5000
+      })
+    }
+  }
+
+  private handleMessage(data: any) {
+    switch (data.type) {
+      case 'notification':
+        this.store.addNotification(data.payload)
+        break
+      case 'lead_update':
+        this.store.updateLead(data.payload)
+        break
+      case 'pong':
+        // Handle heartbeat response
+        break
+      default:
+        console.warn('Unknown message type:', data.type)
     }
   }
 
@@ -110,11 +106,11 @@ class WebSocketService {
     }, 30000) // Send heartbeat every 30 seconds
   }
 
-  public sendMessage(type: string, data: any) {
+  public sendMessage(message: any) {
     if (this.isConnected.value && this.socket?.readyState === WebSocket.OPEN) {
-      this.socket.send(JSON.stringify({ type, data }))
+      this.socket.send(JSON.stringify(message))
     } else {
-      console.warn('WebSocket is not connected')
+      console.error('WebSocket is not connected')
     }
   }
 

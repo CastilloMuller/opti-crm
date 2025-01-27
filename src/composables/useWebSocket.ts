@@ -12,7 +12,12 @@ export function useWebSocket() {
 
   const connect = () => {
     try {
-      const wsUrl = import.meta.env.VITE_WS_URL || 'ws://localhost:3000/ws'
+      const wsUrl = import.meta.env.VITE_WS_URL || 
+        (window.location.protocol === 'https:' ? 
+          'wss://opti-crm-api.onrender.com/ws' : 
+          'ws://localhost:3000/ws')
+
+      console.log('Connecting to WebSocket:', wsUrl)
       socket.value = new WebSocket(wsUrl)
 
       socket.value.onopen = () => {
@@ -50,23 +55,26 @@ export function useWebSocket() {
     if (reconnectAttempts.value < maxReconnectAttempts) {
       reconnectAttempts.value++
       console.log(`Attempting to reconnect (${reconnectAttempts.value}/${maxReconnectAttempts})...`)
-      setTimeout(connect, reconnectDelay * reconnectAttempts.value)
+      
+      setTimeout(() => {
+        connect()
+      }, reconnectDelay)
     } else {
-      console.error('Max reconnection attempts reached')
+      console.log('Max reconnection attempts reached')
       addNotification({
-        type: 'system',
-        title: 'Connection Error',
-        message: 'Unable to connect to the server. Please refresh the page.',
-        priority: 'high',
-        actionRequired: true
+        severity: 'error',
+        summary: 'Connection Error',
+        detail: 'Unable to connect to the server. Please try again later.',
+        life: 5000
       })
     }
   }
 
   const handleWebSocketMessage = (data: any) => {
+    // Handle different message types
     switch (data.type) {
       case 'notification':
-        handleNotification(data.payload)
+        addNotification(data.payload)
         break
       case 'lead_update':
         handleLeadUpdate(data.payload)
@@ -81,7 +89,7 @@ export function useWebSocket() {
         handleSystemMessage(data.payload)
         break
       default:
-        console.warn('Unknown WebSocket message type:', data.type)
+        console.warn('Unknown message type:', data.type)
     }
   }
 
@@ -162,11 +170,14 @@ export function useWebSocket() {
   })
 
   onUnmounted(() => {
-    disconnect()
+    if (socket.value) {
+      socket.value.close()
+    }
   })
 
   return {
     isConnected,
+    socket,
     sendMessage,
     connect,
     disconnect

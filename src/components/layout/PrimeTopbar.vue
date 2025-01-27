@@ -73,7 +73,7 @@ const notifications = ref([
 const unreadNotifications = computed(() => notifications.value.length)
 
 const pageTitle = computed(() => {
-  const routeName = route.name as string || 'Dashboard'
+  const routeName = typeof route.name === 'string' ? route.name : 'Dashboard'
   return routeName.charAt(0).toUpperCase() + routeName.slice(1)
 })
 
