@@ -4,7 +4,6 @@ import type { Lead, Task, Communication, Note } from '@/types/lead'
 
 class WebSocketService {
   private socket: WebSocket | null = null
-  private store = useLeadStore()
   private reconnectAttempts = 0
   private maxReconnectAttempts = 5
   private reconnectDelay = 1000
@@ -50,19 +49,51 @@ class WebSocketService {
         this.lastMessage.value = new Date()
       }
     } catch (error) {
-      console.error('Failed to initialize WebSocket:', error)
+      console.error('Error initializing WebSocket:', error)
+      this.handleReconnect()
+    }
+  }
+
+  private handleMessage(data: string) {
+    try {
+      const store = useLeadStore()
+      const message = JSON.parse(data)
+      
+      switch (message.type) {
+        case 'lead':
+          store.updateLead(message.data as Lead)
+          break
+        case 'task':
+          store.updateTask(message.data as Task)
+          break
+        case 'communication':
+          store.updateCommunication(message.data as Communication)
+          break
+        case 'note':
+          store.updateNote(message.data as Note)
+          break
+        case 'pong':
+          // Handle heartbeat response
+          break
+        default:
+          console.warn('Unknown message type:', message.type)
+      }
+    } catch (error) {
+      console.error('Error handling message:', error)
     }
   }
 
   private handleReconnect() {
     if (this.reconnectAttempts < this.maxReconnectAttempts) {
       this.reconnectAttempts++
-      console.log('Attempting to reconnect... (' + this.reconnectAttempts + '/' + this.maxReconnectAttempts + ')')
+      console.log(`Reconnecting... Attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts}`)
+      
       setTimeout(() => {
         this.initializeWebSocket()
-      }, this.reconnectDelay * this.reconnectAttempts)
+        this.reconnectDelay *= 2 // Exponential backoff
+      }, this.reconnectDelay)
     } else {
-      console.log('Max reconnection attempts reached')
+      console.error('Max reconnection attempts reached')
     }
   }
 
@@ -70,31 +101,30 @@ class WebSocketService {
     if (this.heartbeatInterval) {
       clearInterval(this.heartbeatInterval)
     }
+
     this.heartbeatInterval = window.setInterval(() => {
-      if (this.socket?.readyState === WebSocket.OPEN) {
-        this.socket.send(JSON.stringify({ type: 'heartbeat' }))
+      if (this.isConnected.value && this.socket?.readyState === WebSocket.OPEN) {
+        this.socket.send(JSON.stringify({ type: 'ping' }))
       }
-    }, 30000)
+    }, 30000) // Send heartbeat every 30 seconds
   }
 
-  private handleMessage(data: string) {
-    try {
-      const message = JSON.parse(data)
-      switch (message.type) {
-        case 'connection':
-          console.log('Connection status:', message.status)
-          break
-      }
-    } catch (error) {
-      console.error('Error handling message:', error)
+  public sendMessage(type: string, data: any) {
+    if (this.isConnected.value && this.socket?.readyState === WebSocket.OPEN) {
+      this.socket.send(JSON.stringify({ type, data }))
+    } else {
+      console.warn('WebSocket is not connected')
     }
   }
 
-  public send(data: any) {
-    if (this.socket?.readyState === WebSocket.OPEN) {
-      this.socket.send(JSON.stringify(data))
-    } else {
-      console.error('WebSocket is not connected')
+  public disconnect() {
+    if (this.heartbeatInterval) {
+      clearInterval(this.heartbeatInterval)
+    }
+    
+    if (this.socket) {
+      this.socket.close()
+      this.socket = null
     }
   }
 }
@@ -105,6 +135,9 @@ export function useWebSocket() {
   return {
     isConnected: websocketService.isConnected,
     lastMessage: websocketService.lastMessage,
-    send: (data: any) => websocketService.send(data)
+    sendMessage: websocketService.sendMessage.bind(websocketService),
+    disconnect: websocketService.disconnect.bind(websocketService)
   }
 }
+
+export default websocketService
