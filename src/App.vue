@@ -1,75 +1,56 @@
 <template>
-  <div class="app">
-    <header>
-      <Menubar :model="menuItems" class="menubar">
-        <template #end>
-          <NotificationCenter />
-        </template>
-      </Menubar>
-    </header>
-
-    <main>
-      <RouterView />
-    </main>
+  <div class="app-container">
+    <PrimeSidebarCustom />
+    <div class="main-content">
+      <PrimeTopbar />
+      <div class="content-wrapper p-4">
+        <RouterView />
+      </div>
+    </div>
+    <Toast position="bottom-right" />
+    <ConfirmDialog />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { RouterView } from 'vue-router'
-import Menubar from 'primevue/menubar'
-import Button from 'primevue/button'
-import Badge from 'primevue/badge'
+import PrimeSidebarCustom from '@/components/layout/PrimeSidebarCustom.vue'
+import PrimeTopbar from '@/components/layout/PrimeTopbar.vue'
 import { useNotifications } from '@/composables/useNotifications'
 import { useWebSocket } from '@/composables/useWebSocket'
-import NotificationCenter from '@/components/NotificationCenter.vue'
+import Toast from 'primevue/toast'
+import ConfirmDialog from 'primevue/confirmdialog'
 
 const { notifications, unreadCount } = useNotifications()
 const { isConnected } = useWebSocket()
-
-const menuItems = computed(() => [
-  {
-    label: 'Dashboard',
-    icon: 'pi pi-home',
-    to: '/'
-  },
-  {
-    label: 'Leads',
-    icon: 'pi pi-users',
-    to: '/leads'
-  },
-  {
-    label: 'Calendar',
-    icon: 'pi pi-calendar',
-    to: '/calendar'
-  },
-  {
-    label: 'Analytics',
-    icon: 'pi pi-chart-bar',
-    to: '/analytics'
-  }
-])
 </script>
 
 <style>
-.app {
+.app-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--surface-ground);
+}
+
+.main-content {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  min-width: 0;
 }
 
-header {
-  background-color: var(--surface-card);
-  border-bottom: 1px solid var(--surface-border);
-}
-
-.menubar {
-  padding: 0.5rem 1rem;
-}
-
-main {
+.content-wrapper {
   flex: 1;
-  overflow: auto;
-  background-color: var(--surface-ground);
+  background-color: var(--surface-section);
+  border-radius: 12px;
+  margin: 1rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+:root {
+  --primary-color: #2563eb;
+  --primary-dark: #1e40af;
+  --primary-light: #60a5fa;
 }
 </style>

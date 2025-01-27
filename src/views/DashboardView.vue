@@ -1,178 +1,130 @@
 <template>
-  <div class="dashboard-view">
-    <!-- Header -->
-    <div class="dashboard-header">
-      <h1>Dashboard</h1>
-      <div class="header-actions">
-        <Button 
-          label="Refresh" 
-          icon="pi pi-refresh" 
-          @click="refreshData"
-          class="p-button-outlined"
-        />
-      </div>
-      <div class="connection-status">
-        <i :class="connectionStatus.icon"></i>
-        <span :class="connectionStatus.class">{{ connectionStatus.status }}</span>
-        <small>Last update: {{ lastUpdate }}</small>
-      </div>
-    </div>
-
-    <!-- Quick Actions -->
-    <div class="quick-actions">
-      <Button 
-        label="New Lead" 
-        icon="pi pi-plus"
-        @click="$router.push('/leads?new=true')"
-        class="p-button-success"
-      />
-      <Button 
-        label="Add Task" 
-        icon="pi pi-calendar-plus"
-        @click="$router.push('/calendar?new=true')"
-      />
-      <Button 
-        label="View Analytics" 
-        icon="pi pi-chart-line"
-        @click="$router.push('/analytics')"
-        class="p-button-help"
-      />
-    </div>
-
-    <!-- Main Content Grid -->
-    <div class="dashboard-grid">
-      <!-- Lead Overview Card -->
-      <Panel header="Lead Overview" class="dashboard-panel">
-        <template #icons>
-          <Button 
-            icon="pi pi-arrow-right" 
-            @click="$router.push('/leads')"
-            class="p-button-text p-button-sm" 
-          />
-        </template>
-        <div class="lead-stats">
-          <div class="stat-item">
-            <div class="stat-value">{{ leadMetrics.total }}</div>
-            <div class="stat-label">Total Leads</div>
+  <div class="grid">
+    <!-- Stats Cards -->
+    <div class="col-12 md:col-6 lg:col-3">
+      <div class="surface-card p-4 border-round shadow-1">
+        <div class="flex justify-content-between mb-3">
+          <div>
+            <span class="block text-500 font-medium mb-3">Total Leads</span>
+            <div class="text-900 font-medium text-xl">{{ leadMetrics.total }}</div>
           </div>
-          <div class="stat-item">
-            <div class="stat-value">{{ formatCurrency(leadMetrics.totalValue) }}</div>
-            <div class="stat-label">Total Value</div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-value">{{ formatPercent(conversionMetrics.conversionRate) }}</div>
-            <div class="stat-label">Conversion Rate</div>
+          <div class="flex align-items-center justify-content-center bg-blue-100 border-round" style="width:2.5rem;height:2.5rem">
+            <i class="pi pi-users text-blue-500 text-xl"></i>
           </div>
         </div>
-        <Chart type="doughnut" :data="leadStatusData" :options="doughnutOptions" class="mt-3" />
-      </Panel>
+        <span class="text-green-500 font-medium">{{ leadMetrics.new }} new </span>
+        <span class="text-500">since last week</span>
+      </div>
+    </div>
 
-      <!-- Recent Activity -->
-      <Panel header="Recent Activity" class="dashboard-panel">
-        <Timeline :value="recentActivity" class="activity-timeline">
+    <div class="col-12 md:col-6 lg:col-3">
+      <div class="surface-card p-4 border-round shadow-1">
+        <div class="flex justify-content-between mb-3">
+          <div>
+            <span class="block text-500 font-medium mb-3">Open Tasks</span>
+            <div class="text-900 font-medium text-xl">{{ todaysTasks.total }}</div>
+          </div>
+          <div class="flex align-items-center justify-content-center bg-orange-100 border-round" style="width:2.5rem;height:2.5rem">
+            <i class="pi pi-check-square text-orange-500 text-xl"></i>
+          </div>
+        </div>
+        <span class="text-500">{{ todaysTasks.completed }} completed this week</span>
+      </div>
+    </div>
+
+    <div class="col-12 md:col-6 lg:col-3">
+      <div class="surface-card p-4 border-round shadow-1">
+        <div class="flex justify-content-between mb-3">
+          <div>
+            <span class="block text-500 font-medium mb-3">Conversion Rate</span>
+            <div class="text-900 font-medium text-xl">{{ conversionMetrics.conversionRate }}%</div>
+          </div>
+          <div class="flex align-items-center justify-content-center bg-cyan-100 border-round" style="width:2.5rem;height:2.5rem">
+            <i class="pi pi-percentage text-cyan-500 text-xl"></i>
+          </div>
+        </div>
+        <span class="text-{{ conversionMetrics.conversionTrend > 0 ? 'green' : 'red' }}-500 font-medium">{{ Math.abs(conversionMetrics.conversionTrend) }}% </span>
+        <span class="text-500">vs last month</span>
+      </div>
+    </div>
+
+    <div class="col-12 md:col-6 lg:col-3">
+      <div class="surface-card p-4 border-round shadow-1">
+        <div class="flex justify-content-between mb-3">
+          <div>
+            <span class="block text-500 font-medium mb-3">Revenue</span>
+            <div class="text-900 font-medium text-xl">€{{ formatCurrency(performanceMetrics.revenue) }}</div>
+          </div>
+          <div class="flex align-items-center justify-content-center bg-purple-100 border-round" style="width:2.5rem;height:2.5rem">
+            <i class="pi pi-euro text-purple-500 text-xl"></i>
+          </div>
+        </div>
+        <span class="text-{{ performanceMetrics.revenueTrend > 0 ? 'green' : 'red' }}-500 font-medium">{{ performanceMetrics.revenueTrend }}% </span>
+        <span class="text-500">vs last month</span>
+      </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="col-12 lg:col-6">
+      <div class="surface-card p-4 border-round shadow-1">
+        <h3>Lead Status Distribution</h3>
+        <Chart type="pie" :data="leadStatusData" :options="chartOptions" />
+      </div>
+    </div>
+
+    <div class="col-12 lg:col-6">
+      <div class="surface-card p-4 border-round shadow-1">
+        <h3>Revenue Trend</h3>
+        <Chart type="line" :data="revenueTrendData" :options="chartOptions" />
+      </div>
+    </div>
+
+    <!-- Recent Activities -->
+    <div class="col-12 lg:col-6">
+      <div class="surface-card p-4 border-round shadow-1">
+        <div class="flex justify-content-between align-items-center mb-4">
+          <h3>Recent Activities</h3>
+          <Button label="View All" link />
+        </div>
+        <Timeline :value="recentActivities" class="customized-timeline">
           <template #content="slotProps">
-            <div class="activity-item">
-              <i :class="slotProps.item.icon"></i>
-              <div class="activity-content">
-                <div class="activity-text">{{ slotProps.item.description }}</div>
-                <small>{{ formatTimeAgo(slotProps.item.timestamp) }}</small>
-              </div>
+            <div class="flex flex-column">
+              <small class="text-color-secondary mb-1">{{ formatDateTime(slotProps.item.timestamp) }}</small>
+              <span class="font-medium mb-1">{{ slotProps.item.title }}</span>
+              <p class="text-color-secondary m-0">{{ slotProps.item.description }}</p>
             </div>
           </template>
         </Timeline>
-      </Panel>
+      </div>
+    </div>
 
-      <!-- Tasks Overview -->
-      <Panel header="Tasks Overview" class="dashboard-panel">
-        <template #icons>
-          <Button 
-            icon="pi pi-arrow-right" 
-            @click="$router.push('/calendar')"
-            class="p-button-text p-button-sm" 
-          />
-        </template>
-        <div class="tasks-progress">
-          <div class="progress-item">
-            <label>Today's Tasks</label>
-            <ProgressBar 
-              :value="(todaysTasks.completed / todaysTasks.total) * 100" 
-              :showValue="false"
-            />
-            <small>{{ todaysTasks.completed }}/{{ todaysTasks.total }} completed</small>
-          </div>
-          <div class="progress-item">
-            <label>This Week</label>
-            <ProgressBar 
-              :value="(weekTasks.completed / weekTasks.total) * 100"
-              :showValue="false"
-            />
-            <small>{{ weekTasks.completed }}/{{ weekTasks.total }} completed</small>
-          </div>
+    <!-- Upcoming Tasks -->
+    <div class="col-12 lg:col-6">
+      <div class="surface-card p-4 border-round shadow-1">
+        <div class="flex justify-content-between align-items-center mb-4">
+          <h3>Upcoming Tasks</h3>
+          <Button label="View All" link />
         </div>
-        <DataTable :value="upcomingTasks" class="mt-3">
-          <Column field="title" header="Task">
-            <template #body="{ data }">
-              <div class="task-title">
-                <Tag :value="data.type" />
-                {{ data.title }}
-              </div>
+        <DataTable :value="upcomingTasks" :rows="5" :paginator="false" class="p-datatable-sm">
+          <Column field="title" header="Task"></Column>
+          <Column field="scheduledDate" header="Due Date">
+            <template #body="slotProps">
+              {{ formatDateTime(slotProps.data.scheduledDate) }}
             </template>
           </Column>
-          <Column field="scheduledDate" header="Due">
-            <template #body="{ data }">
-              {{ formatDateTime(data.scheduledDate) }}
-            </template>
-          </Column>
-          <Column field="completed" header="Status">
-            <template #body="{ data }">
-              <Tag 
-                :value="data.completed ? 'Completed' : 'Pending'"
-                :severity="data.completed ? 'success' : 'warning'"
-              />
+          <Column field="priority" header="Priority">
+            <template #body="slotProps">
+              <Tag :value="slotProps.data.priority" :severity="getPrioritySeverity(slotProps.data.priority)" />
             </template>
           </Column>
         </DataTable>
-      </Panel>
-
-      <!-- Hot Leads -->
-      <Panel header="Hot Leads" class="dashboard-panel">
-        <template #icons>
-          <Button 
-            icon="pi pi-arrow-right" 
-            @click="$router.push('/leads?filter=hot')"
-            class="p-button-text p-button-sm" 
-          />
-        </template>
-        <DataTable :value="hotLeads" class="hot-leads-table">
-          <Column field="name" header="Name" />
-          <Column field="quotationValue" header="Value">
-            <template #body="{ data }">
-              {{ formatCurrency(data.quotationValue) }}
-            </template>
-          </Column>
-          <Column field="decisionDate" header="Decision">
-            <template #body="{ data }">
-              {{ formatDate(data.decisionDate) }}
-            </template>
-          </Column>
-          <Column field="leadscore" header="Score">
-            <template #body="{ data }">
-              <ProgressBar :value="data.leadscore" :showValue="true" />
-            </template>
-          </Column>
-        </DataTable>
-      </Panel>
-
-      <!-- Performance Chart -->
-      <Panel header="Performance Trends" class="dashboard-panel">
-        <Chart type="line" :data="performanceData" :options="lineChartOptions" />
-      </Panel>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAnalytics } from '@/composables/useAnalytics'
 import { useLeadStore } from '@/stores/leadStore'
@@ -180,14 +132,12 @@ import { useWebSocket } from '@/services/websocket'
 import { DateTime } from 'luxon'
 
 // PrimeVue Components
-import Panel from 'primevue/panel'
-import Button from 'primevue/button'
+import Chart from 'primevue/chart'
 import Timeline from 'primevue/timeline'
-import ProgressBar from 'primevue/progressbar'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Tag from 'primevue/tag'
-import Chart from 'primevue/chart'
+import Button from 'primevue/button'
 
 const router = useRouter()
 const store = useLeadStore()
@@ -230,43 +180,23 @@ const leadStatusData = computed(() => ({
 }))
 
 // Performance Chart
-const performanceData = computed(() => ({
+const revenueTrendData = computed(() => ({
   labels: performanceMetrics.value.monthly.map(m => m.month),
   datasets: [
     {
-      label: 'New Leads',
-      data: performanceMetrics.value.monthly.map(m => m.leads),
-      borderColor: '#3e5b82',
-      tension: 0.4
-    },
-    {
-      label: 'Completed Tasks',
-      data: performanceMetrics.value.monthly.map(m => m.completedTasks),
-      borderColor: '#ee9b4c',
+      label: 'Revenue',
+      data: performanceMetrics.value.monthly.map(m => m.revenue),
+      borderColor: '#4BC0C0',
       tension: 0.4
     }
   ]
 }))
 
 // Chart Options
-const doughnutOptions = {
-  cutout: '70%',
+const chartOptions = {
   plugins: {
     legend: {
       position: 'bottom'
-    }
-  }
-}
-
-const lineChartOptions = {
-  plugins: {
-    legend: {
-      position: 'bottom'
-    }
-  },
-  scales: {
-    y: {
-      beginAtZero: true
     }
   }
 }
@@ -277,20 +207,6 @@ const todaysTasks = computed(() => {
   const tasks = store.tasks.filter(task => {
     const taskDate = DateTime.fromISO(task.scheduledDate)
     return taskDate >= today && taskDate < today.plus({ days: 1 })
-  })
-  
-  return {
-    total: tasks.length,
-    completed: tasks.filter(t => t.completed).length
-  }
-})
-
-const weekTasks = computed(() => {
-  const startOfWeek = DateTime.now().startOf('week')
-  const endOfWeek = startOfWeek.plus({ days: 7 })
-  const tasks = store.tasks.filter(task => {
-    const taskDate = DateTime.fromISO(task.scheduledDate)
-    return taskDate >= startOfWeek && taskDate < endOfWeek
   })
   
   return {
@@ -310,20 +226,8 @@ const upcomingTasks = computed(() => {
     .slice(0, 5)
 })
 
-// Hot Leads
-const hotLeads = computed(() => 
-  store.leads
-    .filter(lead => 
-      lead.status === 'Hot en snel beslissen' || 
-      lead.status === 'Hot' ||
-      lead.priority >= 8
-    )
-    .sort((a, b) => b.leadscore - a.leadscore)
-    .slice(0, 5)
-)
-
-// Recent Activity
-const recentActivity = computed(() => {
+// Recent Activities
+const recentActivities = computed(() => {
   const activities: any[] = []
 
   // Add tasks
@@ -332,7 +236,8 @@ const recentActivity = computed(() => {
       activities.push({
         type: 'task',
         icon: 'pi pi-check-circle',
-        description: `Completed task: ${task.title}`,
+        title: `Completed task: ${task.title}`,
+        description: task.description,
         timestamp: task.scheduledDate
       })
     }
@@ -343,7 +248,8 @@ const recentActivity = computed(() => {
     activities.push({
       type: 'communication',
       icon: comm.type === 'inbound' ? 'pi pi-arrow-down' : 'pi pi-arrow-up',
-      description: `${comm.type === 'inbound' ? 'Received' : 'Sent'} ${comm.method}: ${comm.content.substring(0, 50)}...`,
+      title: `${comm.type === 'inbound' ? 'Received' : 'Sent'} ${comm.method}: ${comm.content.substring(0, 50)}...`,
+      description: comm.content,
       timestamp: comm.timestamp
     })
   })
@@ -364,184 +270,36 @@ const formatCurrency = (value: number) => {
   }).format(value)
 }
 
-const formatPercent = (value: number) => {
-  return `${Math.round(value)}%`
-}
-
-const formatDate = (date: string) => {
-  return DateTime.fromISO(date).toFormat('dd MMM yyyy')
-}
-
 const formatDateTime = (date: string) => {
   return DateTime.fromISO(date).toFormat('dd MMM HH:mm')
 }
 
-const formatTimeAgo = (date: string) => {
-  return DateTime.fromISO(date).toRelative()
+const getPrioritySeverity = (priority: string) => {
+  const map: { [key: string]: string } = {
+    'High': 'danger',
+    'Medium': 'warning',
+    'Low': 'success'
+  }
+  return map[priority]
 }
-
-const refreshData = () => {
-  // Implement refresh logic if needed
-}
-
-// Lifecycle
-onMounted(() => {
-  // Initial data load if needed
-})
 </script>
 
 <style scoped>
-.dashboard-view {
-  padding: 1rem;
+:deep(.customized-timeline) {
+  .p-timeline-event-content {
+    line-height: 1.5;
+  }
+  
+  .p-timeline-event-opposite {
+    flex: 0;
+    padding: 0 1rem;
+  }
 }
 
-.dashboard-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-}
-
-.dashboard-header h1 {
-  font-family: 'BankGothic', 'ITC Avant Garde Gothic', 'Arial Black', sans-serif;
-  margin: 0;
-  color: var(--color-primary);
-}
-
-.connection-status {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem;
-  background: #f8f9fa;
-  border-radius: 4px;
-  margin-bottom: 1rem;
-}
-
-.connection-status i {
-  font-size: 1rem;
-}
-
-.connection-status small {
-  color: #666;
-  margin-left: 1rem;
-}
-
-.status-connected {
-  color: #22c55e;
-}
-
-.status-disconnected {
-  color: #ef4444;
-}
-
-.quick-actions {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 2rem;
-}
-
-.dashboard-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
-  gap: 1rem;
-}
-
-.dashboard-panel {
-  margin-bottom: 1rem;
-}
-
-.lead-stats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
-  text-align: center;
-}
-
-.stat-item {
-  padding: 1rem;
-  background: #f8f9fa;
-  border-radius: 8px;
-}
-
-.stat-value {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: var(--color-primary);
-  margin-bottom: 0.5rem;
-}
-
-.stat-label {
-  font-size: 0.875rem;
-  color: #666;
-}
-
-.tasks-progress {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.progress-item {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.progress-item label {
-  font-weight: 500;
-}
-
-.progress-item small {
-  color: #666;
-}
-
-.activity-timeline {
-  max-height: 400px;
-  overflow-y: auto;
-}
-
-.activity-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 1rem;
-  padding: 0.5rem 0;
-}
-
-.activity-item i {
-  font-size: 1.2rem;
-  color: var(--color-primary);
-}
-
-.activity-content {
-  flex: 1;
-}
-
-.activity-text {
-  margin-bottom: 0.25rem;
-}
-
-.activity-content small {
-  color: #666;
-}
-
-.task-title {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-:deep(.p-panel-header) {
-  background: #f8f9fa;
-}
-
-:deep(.p-progressbar) {
-  height: 0.5rem;
-}
-
-:deep(.p-datatable-wrapper) {
-  min-height: 200px;
-  max-height: 300px;
-  overflow-y: auto;
+h3 {
+  margin: 0 0 1rem 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-color);
 }
 </style>
