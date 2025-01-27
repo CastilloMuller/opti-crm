@@ -1,8 +1,9 @@
 services:
   - type: web
     name: opti-crm
-    env: static
+    env: node
     buildCommand: npm install && npm run build
+    startCommand: npm run preview
     staticPublishPath: ./dist
     envVars:
       - key: NODE_VERSION
@@ -11,6 +12,8 @@ services:
         value: "https://opti-crm-backend.onrender.com"
       - key: VITE_WS_URL
         value: "wss://opti-crm-backend.onrender.com/ws"
+      - key: PORT
+        value: "10000"
     headers:
       - path: /*
         name: Cache-Control

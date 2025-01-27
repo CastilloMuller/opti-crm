@@ -14,11 +14,12 @@ export default defineConfig({
     sourcemap: true,
     outDir: 'dist',
     assetsDir: 'assets',
-    rollupOptions: {
-      external: [],
-    },
   },
   server: {
+    port: process.env.PORT ? parseInt(process.env.PORT) : 3000,
+    host: '0.0.0.0',
+  },
+  preview: {
     port: process.env.PORT ? parseInt(process.env.PORT) : 3000,
     host: '0.0.0.0',
   },
