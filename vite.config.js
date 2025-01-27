@@ -20,10 +20,10 @@ export default defineConfig({
       '.onrender.com'  // Allow all subdomains on render.com
     ]
   },
-  define: {
-    'process.env': {}
-  },
   build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
+    emptyOutDir: true,
     chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {

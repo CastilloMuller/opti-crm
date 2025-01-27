@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview --host 0.0.0.0 --port $PORT",
-    "start": "vite preview --host 0.0.0.0 --port $PORT"
+    "start": "serve dist -s -n -L -p $PORT"
   },
   "dependencies": {
     "@fullcalendar/core": "^6.1.15",
@@ -24,18 +24,18 @@
     "lru-cache": "^10.1.0",
     "luxon": "^3.4.4",
     "pinia": "^2.1.7",
-    "primevue": "^3.46.0",
-    "primeicons": "^6.0.1",
     "primeflex": "^3.3.1",
-    "serve": "^14.2.1",
+    "primeicons": "^6.0.1",
+    "primevue": "^3.46.0",
+    "serve": "^14.2.4",
     "vue": "^3.3.4",
     "vue-router": "^4.2.5"
   },
   "devDependencies": {
+    "@types/node": "^20.11.0",
     "@vitejs/plugin-vue": "^4.2.3",
     "typescript": "^5.0.2",
     "vite": "^4.4.5",
-    "vue-tsc": "^1.8.5",
-    "@types/node": "^20.11.0"
+    "vue-tsc": "^1.8.5"
   }
 }
