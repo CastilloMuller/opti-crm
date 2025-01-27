@@ -1,15 +1,6 @@
 services:
-  - type: web
+  - type: static
     name: opti-crm
-    env: static
     buildCommand: npm install && npm run build
-    staticPublishPath: ./dist
-    pullRequestPreviewsEnabled: true
-    headers:
-      - path: /*
-        name: Cache-Control
-        value: no-cache
-    routes:
-      - type: rewrite
-        source: /*
-        destination: /index.html
+    publishDir: dist
+    spa: true
