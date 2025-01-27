@@ -7,6 +7,10 @@ services:
     envVars:
       - key: NODE_VERSION
         value: "18"
+      - key: VITE_API_URL
+        value: "https://opti-crm-backend.onrender.com"
+      - key: VITE_WS_URL
+        value: "wss://opti-crm-backend.onrender.com/ws"
     headers:
       - path: /*
         name: Cache-Control
