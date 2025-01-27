@@ -4,6 +4,7 @@ import path from 'path';
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: '/',
   plugins: [vue()],
   resolve: {
     alias: {
@@ -24,6 +25,8 @@ export default defineConfig({
     outDir: 'dist',
     assetsDir: 'assets',
     emptyOutDir: true,
+    manifest: true,
+    sourcemap: true,
     chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {

@@ -5,9 +5,10 @@ services:
     buildCommand: npm install && npm run build
     staticPublishPath: ./dist
     pullRequestPreviewsEnabled: true
-    envVars:
-      - key: NODE_ENV
-        value: production
+    headers:
+      - path: /*
+        name: Cache-Control
+        value: no-cache
     routes:
       - type: rewrite
         source: /*
