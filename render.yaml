@@ -1,9 +1,12 @@
 services:
-  - type: static
+  - type: web
     name: opti-crm
+    env: static
     buildCommand: npm install && npm run build
     staticPublishPath: ./dist
-    publishDir: dist
+    envVars:
+      - key: NODE_VERSION
+        value: "18"
     headers:
       - path: /*
         name: Cache-Control
